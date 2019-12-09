@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean id="placeholderA" class="com.aicoda.routes.placeholderA" />
+    <bean id="placeholderB" class="com.aicoda.processors.placeholderB" />
+    <bean id="placeholderC" class="com.aicoda.routes.placeholderC" />
+    <bean id="placeholderD" class="com.aicoda.routes.placeholderD" />
+    <bean id="dynamicPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.apache.camel.test.AvailablePortFinder</value>
+        </property>
+        <property name="targetMethod">
+            <value>getNextAvailable</value>
+        </property>
+    </bean>
+
+    <camelContext id="simpleRouterContext" xmlns="http://camel.apache.org/schema/spring">
+        <routeBuilder ref="placeholderA" />
+        <routeBuilder ref="placeholderB" />
+        <routeBuilder ref="placeholderC" />
+        <routeBuilder ref="placeholderD" />
+        <endpoint id="portNumber" uri="http://0.0.0.0:#{dynamicPort}"/>
+    </camelContext>
+</beans>
